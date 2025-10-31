@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { sequelize } from './models/index.js';
+import authRoutes from './routes/auth.js';
+import verifyToken from './middlewares/verifyToken.js';
 
 dotenv.config();
 
@@ -14,6 +16,12 @@ app.use(express.json());
 app.get('/api', (req, res) => {
     res.json({ message: 'Backend ES6+ + SQLite3 is running!' });
 });
+
+app.use('/api/auth', authRoutes)
+
+app.get('/api/protected', verifyToken, (req, res) => {
+    res.json({message: 'This is protected route!', user: req.user})
+})
 
 const connectDB = async () => {
     try {
